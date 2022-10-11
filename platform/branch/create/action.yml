@@ -36,6 +36,11 @@ runs:
       uses: actions/setup-python@v4
       with:
         python-version: "3.10"
+    - name: Checkout Action Scripts
+      uses: actions/checkout@v3
+      with:
+        repository: labforward/platform-gha
+        path: gha-local
     - name: Clone platform-repository
       uses: actions/checkout@v3
       with:
@@ -45,9 +50,7 @@ runs:
 
     - name: Install Python Dependencies
       shell: bash
-      run: | 
-        echo "$GITHUB_ACTION_PATH"
-        pip install -r $GITHUB_ACTION_PATH/../src/requirements.txt > /dev/null
+      run: pip install -r $GITHUB_ACTION_PATH/requirements.txt
 
     - name: Create Platform Local Branch
       shell: sh
@@ -66,7 +69,7 @@ runs:
 
     - name: Update Docker Tag With Commit Hash
       shell: bash
-      run: python gha-local/platform/branch/create/src
+      run: python $GITHUB_ACTION_PATH/src
     - name: Push Platform Branch to Remote
       shell: bash
       run: |
