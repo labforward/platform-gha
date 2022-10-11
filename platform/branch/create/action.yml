@@ -39,6 +39,7 @@ runs:
     - name: Checkout Action Scripts
       uses: actions/checkout@v3
       with:
+        repository: labforward/platform-gha
         path: gha-local
     - name: Clone platform-repository
       uses: actions/checkout@v3
@@ -51,7 +52,7 @@ runs:
       shell: bash
       run: | 
         echo "Github"
-        ls -al .github/
+        ls -al
         echo "Local"
         ls -al gha-local/
         pip install -r gha-local/platform/branch/create/requirements.txt
