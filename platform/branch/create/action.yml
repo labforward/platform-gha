@@ -49,7 +49,9 @@ runs:
 
     - name: Install Python Dependencies
       shell: bash
-      run: pip install -r local/.github/actions/platform/branch/create/requirements.txt
+      run: | 
+        ls -al
+        pip install -r local/platform/branch/create/requirements.txt
 
     - name: Create Platform Local Branch
       shell: sh
