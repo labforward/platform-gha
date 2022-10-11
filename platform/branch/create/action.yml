@@ -1,0 +1,77 @@
+name: "Create Platform Branch"
+
+description: "Creates a new branch named gha-{current-branch}. Then, creates a new commit replacing the chartVersion with the commit hash.
+  If the branch already exists, then it will create only the new commit."
+
+inputs:
+  gh_pat:
+    description: 'Github PAT used to trigger the pipeline. It must be a PAT instead of project token'
+    required: true
+  branch:
+    description: 'Branch name used to build. It will be used the last commit available in this branch. Defaults to the branch triggering the workflow.'
+    default: ${GITHUB_REF#refs/heads/}
+    required: true
+  platform_branch:
+    description: 'Name of the branch created in the platform-deployment repository. Defaults to gha-${current-branch-name}'
+    default: gha-${GITHUB_REF##*/}
+    required: true
+  command:
+    description: 'Command used in the commit message'
+    default: '[deploy]'
+    required: true
+  apps:
+    description: 'Target applications of the command in the commit message. E.g.: {lf,lo,iam}'
+    required: true
+  new_chart_version:
+    description: 'Version committed in the chartVersion of the manifest file of the platform-deployment repository. Defaults to 0.0.0-{7-digits-commit-hash}'
+    required: false
+  chart_name:
+    description: 'Name of the manifest chart file in the platform-repository.'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Install Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - name: Checkout Action Scripts
+      uses: actions/checkout@v3
+      with:
+        path: local
+    - name: Clone platform-repository
+      uses: actions/checkout@v3
+      with:
+        repository: labforward/platform-deployment
+        token: ${{ inputs.gh_pat }}
+        path: platform-deployment
+
+    - name: Install Python Dependencies
+      shell: bash
+      run: pip install -r local/.github/actions/platform/branch/create/requirements.txt
+
+    - name: Create Platform Local Branch
+      shell: sh
+      run: |
+        cd platform-deployment 
+        git config user.name "GitHub Actions"
+        git config user.email "<>"
+        git checkout -b ${{ inputs.platform_branch }}
+        git pull --set-upstream origin ${{ inputs.platform_branch }} | true
+
+    - name: Pass Variables to Env
+      shell: bash
+      run: |
+        echo "NEW_CHART_VERSION=${{ inputs.new_chart_version }}" >> $GITHUB_ENV
+        echo "CHART_NAME=${{ inputs.chart_name }}" >> $GITHUB_ENV
+
+    - name: Update Docker Tag With Commit Hash
+      shell: bash
+      run: python local/.github/actions/platform/branch/create/src
+    - name: Push Platform Branch to Remote
+      shell: bash
+      run: |
+        cd platform-deployment
+        git commit manifests/ --allow-empty -m"${{ inputs.command }}${{ inputs.apps }} Created by Github Actions from ${{ github.event.repository.name }}"
+        git push --set-upstream origin ${{ inputs.platform_branch }}

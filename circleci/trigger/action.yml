@@ -1,0 +1,65 @@
+name: "Trigger CircleCI Build"
+
+description: "Trigger the build pipeline in the current branch. 
+  Intended to build all docker images and charts required to deploy the application."
+
+inputs:
+  cci_token:
+    description: 'CircleCI PAT used to trigger the pipeline. It must be a PAT instead of project token'
+    required: true
+  branch:
+    description: 'Branch name used to build. It will be used the last commit available in this branch. Defaults to the branch triggering the workflow.'
+    default: ${GITHUB_REF#refs/heads/}
+    required: true
+  build_param:
+    description: 'CircleCI parameter used to trigger the build action. Defaults to [build]'
+    default: 'build'
+  wait_for_cci_result:
+    description: 'Wait for CircleCI pipeline to complete'
+    required: true
+    default: 'false'
+
+outputs:
+  cci_response:
+    description: 'Response of the CircleCI request'
+    value: ${{ steps.cci_build.outputs.cci_response }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Trigger CircleCI Build Workflow.
+      shell: bash
+      id: trigger_cci
+      run: |
+        PROJECT_SLUG="gh/labforward/${{ github.event.repository.name }}"
+        echo "Triggering pipeline using the {${{ inputs.build_param }}} parameter in the {${{ inputs.branch }}} branch for the {$PROJECT_SLUG} project SLUG."
+        
+        RESPONSE=$(curl -sS -u "${{ inputs.cci_token }}": --header "Content-Type: application/json" \
+          -d "{\"branch\":\"${{ inputs.branch }}\",\"parameters\": {\"${{ inputs.build_param }}\": true}}" \
+          https://circleci.com/api/v2/project/${PROJECT_SLUG}/pipeline | jq -r '.id')
+        
+        echo "::set-output name=cci_response::${RESPONSE}"
+
+    - name: Wait for CircleCI Build Workflow.
+      if: ${{ inputs.wait_for_cci_result }}
+      shell: bash
+      env:
+        CCI_RESPONSE: ${{steps.trigger_cci.outputs.cci_response}}
+        CCI_TOKEN: ${{ inputs.cci_token }}
+      run: |
+        echo "Waiting 30 seconds before start checking CircleCI status."
+        echo "Check on https://app.circleci.com/pipelines/github/labforward/${{ github.event.repository.name }}"
+        sleep 30
+        STATUS=$(curl -sS "https://circleci.com/api/v2/pipeline/$CCI_RESPONSE/workflow?circle-token=$CCI_TOKEN" | jq -r '.items[].status')
+        while [[ $STATUS = 'running' ]]; do
+          echo "Pipeline status is $STATUS"
+          sleep 10
+          STATUS=$(curl -sS "https://circleci.com/api/v2/pipeline/$CCI_RESPONSE/workflow?circle-token=$CCI_TOKEN" | jq -r '.items[].status')
+        done
+        
+        if [[ $STATUS = 'success' ]]; then
+          echo 'Build completed successfully!'
+          exit 0
+        fi
+        echo 'Build failed'
+        exit 1
