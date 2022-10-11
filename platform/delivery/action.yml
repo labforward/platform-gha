@@ -39,13 +39,13 @@ runs:
       uses: actions/checkout@v3
 
     - name: 'Trigger CircleCI Build'
-      uses: ./.github/actions/circleci/trigger
+      uses: labforward/platform-gha/circleci/trigger@0.0.8
       with:
         cci_token: ${{ inputs.cci_token }}
         wait_for_cci_result: true
 
     - name: 'Create platform-deployment Branch'
-      uses: ./.github/actions/platform/branch/create
+      uses: labforward/platform-gha/platform/branch/create@0.0.8
       with:
         gh_pat: ${{ inputs.gh_pat }}
         apps: ${{ inputs.apps }}
