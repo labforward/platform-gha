@@ -1,3 +1,9 @@
+# What to Expect
+
+One-click Build and Deploy in the Development environment:
+
+![GHA User Interface Example](images/gha-workflow.png)
+
 # Workflows
 All actions are triggering other GitHub or circleci processes.
 You can still do everything without GHA. We are just making
@@ -16,6 +22,7 @@ The new version will be available with the release-tag version.
 - Differently from the triggers, changes in the jobs are reflected in the target branch - it will run the code available in the specific branch instead of main.
 
 # Actions
+
 - [Create Platform Branch - deploy](platform/branch/create/README.md)
 - [Trigger CircleCI - build](circleci/trigger/README.md)
 - [Build & Deploy](platform/delivery/README.md)
