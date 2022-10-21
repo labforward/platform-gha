@@ -1,4 +1,4 @@
-name: "'Build and Deploy"
+name: "Build and Deploy"
 
 description: "Build all docker images and helm charts. 
   Creates a new branch named gha-{current-branch}. Then, creates a new commit replacing the chartVersion with the commit hash.
