@@ -11,8 +11,7 @@ on:
         options:
           - deploy
       apps:
-        description: "Application's Acronyms to deploy. Check the full list of available applications in 
-        https://github.com/labforward/platform-deployment/blob/main/config/installation/activation.properties"
+        description: "Application's Acronyms to deploy. Check https://github.com/labforward/platform-deployment/blob/main/config/installation/activation.properties"
         type: string
         required: true
         default: '{fos}'
