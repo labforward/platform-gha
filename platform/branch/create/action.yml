@@ -59,7 +59,7 @@ runs:
         git config user.name "GitHub Actions"
         git config user.email "<>"
         git checkout -b ${{ inputs.platform_branch }}
-        git pull --set-upstream origin ${{ inputs.platform_branch }} | true
+        git pull --rebase --set-upstream origin ${{ inputs.platform_branch }} | true
 
     - name: Pass Variables to Env
       shell: bash
