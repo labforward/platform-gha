@@ -21,8 +21,6 @@ jobs:
     name: 'Build And Trigger Platform Deployment'
     runs-on: ubuntu-22.04
     steps:
-      - name: 'Checkout actions'
-        uses: actions/checkout@v3
       - name: 'Build with CircleCI and Deploy via Platform'
         uses: labforward/platform-gha/platform/delivery@0.0.8
         with:

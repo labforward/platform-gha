@@ -21,8 +21,6 @@ jobs:
     name: 'Commit chartVersion to Platform Branch'
     runs-on: ubuntu-22.04
     steps:
-      - name: 'Checkout actions'
-        uses: actions/checkout@v3
       - name: 'Create platform-deployment Branch'
         uses: labforward/platform-gha/platform/branch/create@0.0.8
         with:
