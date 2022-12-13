@@ -1,6 +1,6 @@
 name: "Trigger CircleCI Build"
 
-description: "Trigger the build pipeline in the current branch. 
+description: "Trigger the build pipeline in the current branch.
   Intended to build all docker images and charts required to deploy the application."
 
 inputs:
@@ -33,11 +33,11 @@ runs:
       run: |
         PROJECT_SLUG="gh/labforward/${{ github.event.repository.name }}"
         echo "Triggering pipeline using the {${{ inputs.build_param }}} parameter in the {${{ inputs.branch }}} branch for the {$PROJECT_SLUG} project SLUG."
-        
+
         RESPONSE=$(curl -sS -u "${{ inputs.cci_token }}": --header "Content-Type: application/json" \
           -d "{\"branch\":\"${{ inputs.branch }}\",\"parameters\": {\"${{ inputs.build_param }}\": true}}" \
           https://circleci.com/api/v2/project/${PROJECT_SLUG}/pipeline | jq -r '.id')
-        
+
         echo "::set-output name=cci_response::${RESPONSE}"
 
     - name: Wait for CircleCI Build Workflow.
@@ -50,13 +50,13 @@ runs:
         echo "Waiting 30 seconds before start checking CircleCI status."
         echo "Check on https://app.circleci.com/pipelines/github/labforward/${{ github.event.repository.name }}"
         sleep 30
-        STATUS=$(curl -sS "https://circleci.com/api/v2/pipeline/$CCI_RESPONSE/workflow?circle-token=$CCI_TOKEN" | jq -r '.items[].status')
+        STATUS=$(curl -sS "https://circleci.com/api/v2/pipeline/$CCI_RESPONSE/workflow?circle-token=$CCI_TOKEN" | jq '.items[] | select(.name == "build-and-push-dev-images") | .status')
         while [[ $STATUS = 'running' ]]; do
           echo "Pipeline status is $STATUS"
           sleep 10
-          STATUS=$(curl -sS "https://circleci.com/api/v2/pipeline/$CCI_RESPONSE/workflow?circle-token=$CCI_TOKEN" | jq -r '.items[].status')
+          STATUS=$(curl -sS "https://circleci.com/api/v2/pipeline/$CCI_RESPONSE/workflow?circle-token=$CCI_TOKEN" | jq '.items[] | select(.name == "build-and-push-dev-images") | .status')
         done
-        
+
         if [[ $STATUS = 'success' ]]; then
           echo 'Build completed successfully!'
           exit 0
