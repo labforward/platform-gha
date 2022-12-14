@@ -55,11 +55,11 @@ runs:
         echo "Waiting 30 seconds before start checking CircleCI status."
         echo "Check on https://app.circleci.com/pipelines/github/labforward/${{ github.event.repository.name }}"
         sleep 30
-        STATUS=$(curl -sS "https://circleci.com/api/v2/pipeline/$CCI_RESPONSE/workflow?circle-token=$CCI_TOKEN" | jq -Me ".items[] | select(.name == '${CCI_BUILD_NAME}') | .status"  || echo '"circleci_curl_fail"')
+        STATUS=$(curl -sS "https://circleci.com/api/v2/pipeline/$CCI_RESPONSE/workflow?circle-token=$CCI_TOKEN" | jq -Me ".items[] | select(.name == \"${CCI_BUILD_NAME}\") | .status"  || echo '"circleci_curl_fail"')
         while [[ $STATUS = 'running' ]]; do
           echo "Pipeline status is $STATUS"
           sleep 10
-          STATUS=$(curl -sS "https://circleci.com/api/v2/pipeline/$CCI_RESPONSE/workflow?circle-token=$CCI_TOKEN" | jq -Me ".items[] | select(.name == '${CCI_BUILD_NAME}') | .status" || echo '"circleci_curl_fail"')
+          STATUS=$(curl -sS "https://circleci.com/api/v2/pipeline/$CCI_RESPONSE/workflow?circle-token=$CCI_TOKEN" | jq -Me ".items[] | select(.name == \"${CCI_BUILD_NAME}\") | .status" || echo '"circleci_curl_fail"')
         done
         
         if [[ $STATUS = 'success' ]]; then
