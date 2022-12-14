@@ -53,7 +53,7 @@ runs:
         cci_token: ${{ inputs.cci_token }}
         wait_for_cci_result: true
         build_param: ${{ inputs.build_param }}
-        docker_build_job_name: $${{ inputs.docker_build_job_name }}
+        docker_build_job_name: ${{ inputs.docker_build_job_name }}
 
     - name: 'Create platform-deployment Branch'
       uses: labforward/platform-gha/platform/branch/create@1.0.1-SNAPSHOT
