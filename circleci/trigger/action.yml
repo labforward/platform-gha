@@ -66,5 +66,6 @@ runs:
           echo 'Build completed successfully!'
           exit 0
         fi
+        echo $STATUS
         echo 'Build failed'
         exit 1
