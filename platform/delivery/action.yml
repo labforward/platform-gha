@@ -48,7 +48,7 @@ runs:
       uses: actions/checkout@v3
 
     - name: 'Trigger CircleCI Build'
-      uses: labforward/platform-gha/circleci/trigger@1.0.1-SNAPSHOT
+      uses: labforward/platform-gha/circleci/trigger@1.0.1
       with:
         cci_token: ${{ inputs.cci_token }}
         wait_for_cci_result: true
@@ -56,7 +56,7 @@ runs:
         docker_build_job_name: ${{ inputs.docker_build_job_name }}
 
     - name: 'Create platform-deployment Branch'
-      uses: labforward/platform-gha/platform/branch/create@1.0.1-SNAPSHOT
+      uses: labforward/platform-gha/platform/branch/create@1.0.1
       with:
         gh_pat: ${{ inputs.gh_pat }}
         apps: ${{ inputs.apps }}
