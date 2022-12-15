@@ -35,6 +35,10 @@ inputs:
   build_param:
     description: 'CircleCI parameter used to trigger the build action. Defaults to [build]'
     default: 'build'
+  docker_build_job_name:
+    description: 'Name of the product`s job that build and push the application`s docker image'
+    required: true
+    default: 'docker-build-and-push'
 
 
 runs:
@@ -44,14 +48,15 @@ runs:
       uses: actions/checkout@v3
 
     - name: 'Trigger CircleCI Build'
-      uses: labforward/platform-gha/circleci/trigger@1.0.0
+      uses: labforward/platform-gha/circleci/trigger@1.0.1
       with:
         cci_token: ${{ inputs.cci_token }}
         wait_for_cci_result: true
         build_param: ${{ inputs.build_param }}
+        docker_build_job_name: ${{ inputs.docker_build_job_name }}
 
     - name: 'Create platform-deployment Branch'
-      uses: labforward/platform-gha/platform/branch/create@1.0.0
+      uses: labforward/platform-gha/platform/branch/create@1.0.1
       with:
         gh_pat: ${{ inputs.gh_pat }}
         apps: ${{ inputs.apps }}

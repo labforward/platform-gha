@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: 'Create platform-deployment Branch'
-        uses: labforward/platform-gha/platform/branch/create@0.0.8
+        uses: labforward/platform-gha/platform/branch/create@1.0.1
         with:
           gh_pat: ${{ secrets.GH_PAT }}
           apps: ${{ inputs.apps }}
