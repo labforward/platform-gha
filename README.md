@@ -5,6 +5,7 @@ One-click Build and Deploy in the Development environment:
 ![GHA User Interface Example](images/gha-workflow.png)
 
 # Workflows
+
 All actions are triggering other GitHub or circleci processes.
 You can still do everything without GHA. We are just making
 it easier for you by centralizing everything in GH API!
@@ -29,7 +30,7 @@ The new version will be available with the release-tag version.
 
 # Usage Example
 
-The workflows must be added in the *.github/workflows* directory, in the root of the application's repository.
+The workflows must be added in the _.github/workflows_ directory, in the root of the application's repository.
 You can copy our [example folder](example) directly into your application. Then:
-- Add the *CCI_TOKEN* and *GH_PAT* secrets into your GitHub repository. These are the tokens to access CircleCI and other GH repositories;
+
 - Look for the chart_name parameter and replace it with the manifest file name of your application in the platform-deployment repository.
